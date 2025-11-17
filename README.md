@@ -1,99 +1,116 @@
-# Sistema de Turnos y Gestión de Pacientes - Centro Médico Universitario
+# Sistema de Reservas y Gestión de Recursos - Centro de Innovación UDI
 
-Este proyecto es una aplicación web Fullstack (MERN) diseñada para gestionar la atención de pacientes, turnos médicos y administración de usuarios en un Centro Médico Universitario.
+Este proyecto es una aplicación web Fullstack (MERN + TypeScript) desarrollada para la **Dirección Académica de la UDI**. Su objetivo es modernizar la gestión de reservas del Centro de Innovación y Laboratorios, reemplazando el uso de Excel y WhatsApp.
 
-El sistema resuelve problemas de doble asignación, falta de control de acceso y gestión manual de historias clínicas.
+El sistema permite gestionar el préstamo de salas y equipos sensibles (tablets, kits de robótica, etc.), asegurando la trazabilidad y evitando la doble asignación de recursos.
+
+---
 
 ## 🚀 Despliegue (Demo)
 
-- **Frontend (Vercel):** [Pegar aquí tu URL de Vercel]
-- **Backend (Render):** [Pegar aquí tu URL de Render]
+- **Frontend (Vercel):** [PEGA_AQUÍ_TU_ENLACE_DE_VERCEL]
+- **Backend (Render):** [PEGA_AQUÍ_TU_ENLACE_DE_RENDER]
 
 ---
 
 ## 🛠️ Tecnologías Utilizadas
 
-El proyecto fue desarrollado utilizando TypeScript para garantizar la robustez del código.
+El proyecto implementa una arquitectura robusta utilizando **TypeScript** tanto en el cliente como en el servidor.
 
 - **Backend:** Node.js, Express, MongoDB (Mongoose), JWT, bcrypt.
 - **Frontend:** React (Vite), React Router, Axios, CSS Modules.
-- **Infraestructura:** Render (API), Vercel (Cliente), MongoDB Atlas.
+- **Infraestructura:** Render (API), Vercel (Cliente), MongoDB Atlas (Base de datos).
 
 ---
 
 ## 👥 Roles y Funcionalidades
 
-El sistema cuenta con autenticación y autorización basada en roles (RBAC):
+El sistema implementa autenticación segura y autorización basada en roles (RBAC) según los requerimientos del caso:
 
-### 1. Administrador
-- **Gestión de Usuarios:** Puede crear nuevos usuarios asignando roles (Admin, Médico, Recepcionista).
-- **Auditoría:** Visualización de listados de usuarios y control del sistema.
+### 1. Administrador (ADMIN)
+- **Gestión de Usuarios:** Creación de cuentas con roles específicos (Admin, Gestor, Docente).
+- **Control de Acceso:** Capacidad para **activar o desactivar** cuentas de usuario, impidiendo el acceso al sistema.
 
-### 2. Recepcionista
-- **Gestión de Pacientes:** Registro de nuevos pacientes con datos personales (CI, nombre, etc.).
-- **Gestión de Turnos:** Agendamiento de citas validando disponibilidad de médicos.
-- **Visualización:** Listado de turnos programados.
+### 2. Gestor de Recursos (GESTOR)
+- **Inventario:** Registro y actualización de recursos (Salas y Equipos).
+- **Gestión de Solicitudes:** Visualización de reservas pendientes con opciones para **Aprobar** o **Rechazar**.
+- **Incidencias:** Capacidad para reportar daños (ej. "Impresora obstruida") y marcar recursos como `FUERA_DE_SERVICIO`.
 
-### 3. Médico
-- **Panel Personal:** Visualización exclusiva de sus propios turnos asignados.
-- **Gestión de Atención:**
-  - Marcar turno como **ATENDIDO**.
-  - Marcar turno como **AUSENTE** (con registro de motivo/nota).
-- **Historial:** Acceso al historial de sus atenciones realizadas.
+### 3. Docente (DOCENTE)
+- **Catálogo:** Visualización de recursos disponibles para reserva.
+- **Solicitudes:** Formulario para crear nuevas reservas indicando fecha, hora y propósito.
+- **Historial:** Panel personal para ver el estado de sus solicitudes (Pendiente, Aprobada, Rechazada).
+
+---
+
+## ✅ Características Técnicas Destacadas
+
+1.  **Validación de Solapamiento:** El backend impide crear una reserva si el recurso ya está ocupado (APROBADA) en el rango de horario seleccionado.
+2.  **Seguridad:**
+    - Autenticación vía JWT (JSON Web Tokens).
+    - Contraseñas encriptadas con `bcrypt`.
+    - Middlewares de protección de rutas por Rol.
+3.  **Manejo de Estados:** Flujo completo de estados de reserva (`PENDIENTE` -> `APROBADA` / `RECHAZADA`).
+4.  **Optimización:** Uso de `React.lazy` para la carga diferida de módulos según el rol del usuario.
 
 ---
 
 ## ⚙️ Instalación y Configuración Local
+Si deseas ejecutar este proyecto en tu máquina local:
+ **Prerrequisitos**
+  - Node.js (v16+)
+  - MongoDB (URI de conexión)
 
-Si deseas correr este proyecto en tu máquina local, sigue estos pasos:
-
-### Prerrequisitos
-- Node.js (v16 o superior)
-- MongoDB (Local o Atlas)
-
-### 1. Clonar el repositorio
+1. **Clona el repositorio:**
 ```bash
-git clone <TU_URL_DEL_REPOSITORIO>
-cd proyecto-centro-medico
+  git clone <URL_DEL_REPOSITORIO>
+  cd sistema-reservas-udi
 ```
-### 2. Configurar el Backend
+2. **Configura el Backend:**
 ```bash
-cd server
-npm install
-```
-- Crea un archivo .env basado en .env.example.
-- Configura tu MONGO_URI y JWT_SECRET.
-
-Poblar la Base de Datos (Seed): Para crear los usuarios iniciales (Admin, Médico, Recepción), ejecuta:
-```bash
-npm run seed
+  cd server
+  npm install
 ```
 
+ Crea un archivo .env con tus credenciales:
+```
+  PORT=4000
+  MONGODB_URI=mongodb+srv://<usuario>:<pass>@cluster.mongodb.net/udi-db
+  JWT_SECRET=<TU_SECRETO_JWT>
+```
+
+Poblar la Base de Datos (Seed): Este comando crea usuarios (Admin, Gestor, Docentes) y recursos de prueba.
+```bash
+  npm run seed
+```
 Iniciar Servidor:
 ```bash
-npm run dev
+  npm run dev
 ```
-
-### 3. Configurar el Frontend
-Abrir una nueva terminal:
+3. **Configura el Frontend:**
+En una nueva terminal:
 ```bash
-cd client
-npm install
+  cd ../client
+  npm install
 ```
-- Crea un archivo .env basado en .env.example.
-- Asegúrate de que VITE_API_URL apunte a tu backend (ej. http://localhost:4000/api).
-
-Iniciar Cliente:
+Crea un archivo .env apuntando a tu backend local:
 ```bash
-npm run dev
+  VITE_API_URL=http://localhost:4000/api
 ```
-🔒 Seguridad Implementada
-- Autenticación: Tokens JWT (JSON Web Tokens) con expiración.
-- Autorización: Middlewares checkAuth y checkRole para proteger rutas sensibles.
-- Datos: Contraseñas hasheadas con bcrypt antes de guardar en base de datos.
-- CORS: Configurado para permitir peticiones solo desde dominios autorizados en producción.
+iniciar Cliente:
+```bash
+  npm run dev
+```
+Credenciales de Prueba (Seed)
+| Rol           | Usuario       | Contraseña   |
+|:-------------:|:-------------:|:------------:|
+| Administrador | admin         | password123  |
+| Gestor        | gestor1       | password123  |
+| Docente       | docente_juan  | password123  |
 
-📂 Estructura del Proyecto
+---
+
+## 📂 Estructura del Proyecto
 ```bash
 /
 ├── client/                        # Frontend (React + Vite + TypeScript)
@@ -117,21 +134,21 @@ npm run dev
 │   ├── tsconfig.json
 │   └── src/
 │       ├── controllers/           # Lógica de negocio (peticiones)
-│       │   ├── appointment.Controller.ts
+│       │   ├── reservation.Controller.ts
 │       │   ├── auth.Controller.ts
-│       │   ├── patient.Controller.ts
+│       │   ├── resource.Controller.ts
 │       │   └── user.Controller.ts
 │       ├── middlewares/           # Middlewares (auth, roles)
 │       │   ├── checkAuth.ts
 │       │   └── checkRole.ts
 │       ├── models/                # Esquemas Mongoose
-│       │   ├── appointment.Model.ts
-│       │   ├── patient.Model.ts
+│       │   ├── reservation.Model.ts
+│       │   ├── resource.Model.ts
 │       │   └── user.Model.ts
 │       ├── routes/                # Definición de rutas
-│       │   ├── appointment.Routes.ts
+│       │   ├── reservation.Routes.ts
 │       │   ├── auth.Routes.ts
-│       │   ├── patient.Routes.ts
+│       │   ├── resource.Routes.ts
 │       │   └── user.Routes.ts
 │       ├── index.ts               # Entrada principal (Express app)
 │       └── seed.ts                # Script para poblar DB de prueba
