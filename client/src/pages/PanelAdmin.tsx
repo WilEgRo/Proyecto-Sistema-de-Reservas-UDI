@@ -10,6 +10,7 @@ interface User {
   _id: string;
   username: string;
   role: UserRole;
+  role2: UserRole;
   active: boolean; // Nuevo campo
 }
 
@@ -21,6 +22,7 @@ const [formData, setFormData] = useState({
   username: '',
   password: '',
   role: 'DOCENTE' as UserRole, // Rol por defecto en el formulario
+  role2: 'DOCENTE' as UserRole,
 });
 const [loading, setLoading] = useState(true);
 
@@ -54,11 +56,15 @@ const handleSubmit = async (e: React.FormEvent) => {
     setUsers([...users, response.data]);
     
     // Limpiar formulario
-    setFormData({ username: '', password: '', role: 'DOCENTE' });
+    setFormData({ username: '', password: '', role: 'DOCENTE', role2: 'DOCENTE' });
   } catch (err: any) {
     console.error(err);
   }
 };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
 // --- Cambiar Rol y Estado (Active) ---
 const handleUpdateUser = async (id: string, updates: Partial<User>) => {
@@ -79,11 +85,39 @@ return (
       <div style={styles.formContainer}>
         <h3 style={styles.heading}>Crear Usuario</h3>
         <form onSubmit={handleSubmit}>
-          {/* ... Inputs Username y Password iguales ... */}
-          
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Nombre de Usuario:</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              style={styles.input}
+              required
+            />
+          </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Contraseña:</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              style={styles.input}
+              required
+            />
+          </div>
           <div style={styles.inputGroup}>
             <label style={styles.label}>Rol:</label>
             <select style={styles.select} value={formData.role} onChange={e => setFormData({...formData, role: e.target.value as UserRole})}>
+              <option value="DOCENTE">Docente</option>
+              <option value="GESTOR">Gestor de Recursos</option>
+              <option value="ADMIN">Administrador</option>
+            </select>
+          </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Segundo Rol:</label>
+            <select style={styles.select} value={formData.role2} onChange={e => setFormData({...formData, role2: e.target.value as UserRole})}>
               <option value="DOCENTE">Docente</option>
               <option value="GESTOR">Gestor de Recursos</option>
               <option value="ADMIN">Administrador</option>
@@ -98,7 +132,7 @@ return (
         <h3 style={styles.heading}>Usuarios del Sistema</h3>
         <table style={styles.table}>
           <thead>
-            <tr><th>Usuario</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr>
+            <tr><th>Usuario</th><th>Rol</th><th>Rol2</th><th>Estado</th><th>Acciones</th></tr>
           </thead>
           <tbody>
             {users.map(u => (
@@ -108,6 +142,17 @@ return (
                   <select 
                     value={u.role} 
                     onChange={(e) => handleUpdateUser(u._id, { role: e.target.value as UserRole })}
+                    style={styles.selectCompact}
+                  >
+                    <option value="ADMIN">ADMIN</option>
+                    <option value="GESTOR">GESTOR</option>
+                    <option value="DOCENTE">DOCENTE</option>
+                  </select>
+                </td>
+                <td style={styles.td}>
+                  <select 
+                    value={u.role2}
+                    onChange={(e) => handleUpdateUser(u._id, { role2: e.target.value as UserRole })}
                     style={styles.selectCompact}
                   >
                     <option value="ADMIN">ADMIN</option>

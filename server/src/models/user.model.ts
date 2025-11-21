@@ -11,6 +11,7 @@ export interface IUser extends IUserPassword{
     username: string;
     password: string;
     role: 'ADMIN' | 'GESTOR' | 'DOCENTE';
+    role2: 'ADMIN' | 'GESTOR' | 'DOCENTE';
     active: boolean;
 }
 
@@ -28,6 +29,12 @@ const userSchema: Schema<IUser> = new Schema({
         required: true,
     },
     role: {
+        type: String,
+        required: true,
+        enum: ['ADMIN', 'GESTOR', 'DOCENTE'],
+        default: 'DOCENTE',
+    },
+    role2: {
         type: String,
         required: true,
         enum: ['ADMIN', 'GESTOR', 'DOCENTE'],

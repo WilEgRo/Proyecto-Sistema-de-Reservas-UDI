@@ -3,11 +3,11 @@ import User from '../models/user.model';
 
 // --- Crear un nuevo usuario (Rol: ADMIN) ---
 export const createUser = async (req: Request, res: Response) => {
-  const { username, password, role } = req.body;
+  const { username, password, role, role2 } = req.body;
 
   // Validación básica
-  if (!username || !password || !role) {
-    return res.status(400).json({ message: 'Todos los campos son requeridos (username, password, role)' });
+  if (!username || !password || !role || !role2) {
+    return res.status(400).json({ message: 'Todos los campos son requeridos (username, password, role, role2)' });
   }
 
   try {
@@ -30,6 +30,8 @@ export const createUser = async (req: Request, res: Response) => {
       id: user._id,
       username: user.username,
       role: user.role,
+      role2: user.role2,
+      active: user.active,
     });
 
   } catch (error) {
@@ -59,12 +61,12 @@ export const getAllUsers = async (req: Request, res: Response) => {
 // --- Actualizar Usuario (Admin) ---
 export const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { role, active } = req.body; // Recibimos active
+  const { role, role2, active } = req.body; // Recibimos active
 
   try {
     const user = await User.findByIdAndUpdate(
       id, 
-      { role, active }, 
+      { role, role2, active }, 
       { new: true }
     ).select('-password');
 
